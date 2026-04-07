@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>지인 추천 이벤트</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
-
     * {
       margin: 0;
       padding: 0;
@@ -14,536 +12,90 @@
     }
 
     body {
-      font-family: 'Noto Sans KR', sans-serif;
       background-color: #f5f5f5;
-      color: #333;
+      display: flex;
+      justify-content: center;
     }
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      background-color: #fff;
-      overflow: hidden;
-    }
-
-    /* Hero Section */
-    .hero {
-      background-color: #7CC83F;
-      padding: 40px 20px 50px;
-      text-align: center;
+    .wrapper {
       position: relative;
-      overflow: hidden;
+      width: 100%;
+      max-width: 500px;
     }
 
-    .hero::before,
-    .hero::after {
-      content: 'COUPON';
+    .wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    /* 투명 클릭 오버레이 버튼 공통 */
+    .btn-overlay {
       position: absolute;
-      font-size: 48px;
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.15);
-      transform: rotate(-15deg);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
     }
 
-    .hero::before {
-      top: 60px;
-      left: -40px;
+    /* STEP 1 - 링크 복사하기 버튼 (파란 버튼) */
+    .btn-step1 {
+      top: 44.5%;
+      left: 58%;
+      width: 39%;
+      height: 2.2%;
     }
 
-    .hero::after {
+    /* 하단 큰 링크 복사하기 버튼 */
+    .btn-bottom {
+      top: 87.4%;
+      left: 4%;
+      width: 92%;
+      height: 3.2%;
+    }
+
+    /* 복사 완료 토스트 메시지 */
+    .toast {
+      position: fixed;
       bottom: 40px;
-      right: -30px;
-    }
-
-    .badge {
-      display: inline-block;
-      background-color: #FFF176;
-      color: #333;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 8px 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 12px 28px;
       border-radius: 50px;
-      margin-bottom: 16px;
-    }
-
-    .hero h1 {
-      font-size: 32px;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 30px;
-      line-height: 1.3;
-    }
-
-    .coupon-card {
-      display: inline-block;
-      position: relative;
-      z-index: 1;
-      margin-bottom: 30px;
-    }
-
-    .coupon-icon {
-      width: 60px;
-      height: 60px;
-      background-color: #5AB02A;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto -10px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .coupon-icon svg {
-      width: 30px;
-      height: 30px;
-      fill: #fff;
-    }
-
-    .coupon-body {
-      background-color: #fff;
-      border-radius: 16px;
-      padding: 30px 40px 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .coupon-label {
-      font-size: 14px;
-      font-weight: 700;
-      color: #999;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
-    }
-
-    .coupon-amount {
-      font-size: 56px;
-      font-weight: 900;
-      color: #333;
-      line-height: 1.2;
-    }
-
-    .hero-desc {
-      color: #fff;
-      font-size: 16px;
-      line-height: 1.8;
-    }
-
-    .hero-desc .highlight {
-      color: #FFF176;
-      font-weight: 700;
-    }
-
-    /* Target Section */
-    .target-section {
-      padding: 60px 20px;
-      text-align: center;
-      background-color: #F8F8F8;
-    }
-
-    .target-section h2 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 40px;
-    }
-
-    .target-section h2 strong {
-      font-weight: 900;
-    }
-
-    .target-cards {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-    }
-
-    .target-card {
-      flex: 1;
-      max-width: 140px;
-      text-align: center;
-    }
-
-    .target-card-icon {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin: 0 auto 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .target-card-icon.welfare {
-      background-color: #E8F5E9;
-    }
-
-    .target-card-icon.lunch {
-      background-color: #E3F2FD;
-    }
-
-    .target-card-icon.existing {
-      background-color: #E8F5E9;
-    }
-
-    .target-card-icon svg {
-      width: 50px;
-      height: 50px;
-    }
-
-    .target-card h3 {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #333;
-    }
-
-    .target-card p {
-      font-size: 12px;
-      color: #999;
-      line-height: 1.6;
-    }
-
-    /* Steps Section */
-    .steps-section {
-      padding: 60px 20px;
-      background-color: #E8F5E9;
-    }
-
-    .steps-section h2 {
-      font-size: 26px;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .step-card {
-      background-color: #fff;
-      border-radius: 16px;
-      padding: 28px 24px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .step-content {
-      flex: 1;
-    }
-
-    .step-badge {
-      display: inline-block;
-      background-color: #333;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 50px;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
-    }
-
-    .step-content h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .step-content p {
-      font-size: 14px;
-      color: #888;
-      line-height: 1.5;
-    }
-
-    .step-action {
-      flex-shrink: 0;
-    }
-
-    .copy-link-btn-small {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background-color: #7CC83F;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 12px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
+      font-size: 15px;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
       white-space: nowrap;
+      z-index: 999;
     }
 
-    .copy-link-btn-small svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-
-    .step-illustration {
-      width: 100px;
-      height: 80px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .step-illustration svg {
-      width: 80px;
-      height: 80px;
-    }
-
-    .step-card.step3 .step-content h3 strong {
-      font-weight: 900;
-    }
-
-    /* CTA Button */
-    .cta-section {
-      padding: 0 20px 40px;
-      background-color: #E8F5E9;
-    }
-
-    .cta-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background-color: #7CC83F;
-      color: #fff;
-      font-size: 20px;
-      font-weight: 700;
-      padding: 20px;
-      border-radius: 16px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .cta-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: #fff;
-    }
-
-    /* Footer */
-    .footer {
-      padding: 30px 20px;
-      background-color: #F0F0F0;
-    }
-
-    .footer p {
-      font-size: 12px;
-      color: #999;
-      line-height: 1.8;
-    }
-
-    /* Coupon floating decorations */
-    .coupon-deco {
-      position: absolute;
-      background-color: rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 8px 16px;
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.3);
-      transform: rotate(-15deg);
-    }
-
-    .coupon-deco.deco1 {
-      top: 30px;
-      left: -10px;
-    }
-
-    .coupon-deco.deco2 {
-      top: 10px;
-      right: 20px;
-    }
-
-    .coupon-deco.deco3 {
-      bottom: 60px;
-      left: 10px;
-    }
-
-    /* 50,000 illustration */
-    .amount-illustration {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .amount-illustration .amount-text {
-      font-size: 32px;
-      font-weight: 900;
-      color: #7CC83F;
-    }
-
-    .megaphone-icon {
-      width: 40px;
-      height: 40px;
-    }
-
-    .megaphone-icon svg {
-      width: 100%;
-      height: 100%;
+    .toast.show {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrapper">
+    <img src="event.png" alt="지인 추천 이벤트">
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="coupon-deco deco1">COUPON</div>
-      <div class="coupon-deco deco2">COUPON</div>
-      <div class="coupon-deco deco3">COUPON</div>
+    <!-- STEP 1 링크 복사하기 버튼 오버레이 -->
+    <button class="btn-overlay btn-step1" onclick="copyLink()" aria-label="링크 복사하기"></button>
 
-      <div class="badge">5만원 계속 받는 방법</div>
-      <h1>지인 추천 이벤트</h1>
-
-      <div class="coupon-card">
-        <div class="coupon-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </div>
-        <div class="coupon-body">
-          <div class="coupon-label">COUPON</div>
-          <div class="coupon-amount">50,000</div>
-        </div>
-      </div>
-
-      <div class="hero-desc">
-        횟수와 상관없이<br>
-        추천받는 기업이 서비스 도입할 때 마다<br>
-        <span class="highlight">식품관 50,000원 쿠폰 제공!</span>
-      </div>
-    </section>
-
-    <!-- Target Section -->
-    <section class="target-section">
-      <h2>주변에 <strong>이런 분</strong> 계시지 않나요?</h2>
-      <div class="target-cards">
-        <div class="target-card">
-          <div class="target-card-icon welfare">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="30" r="15" fill="#5AB02A"/>
-              <path d="M25 75 Q50 50 75 75" stroke="#5AB02A" stroke-width="4" fill="none"/>
-              <line x1="40" y1="20" x2="35" y2="10" stroke="#5AB02A" stroke-width="2"/>
-              <line x1="60" y1="20" x2="65" y2="10" stroke="#5AB02A" stroke-width="2"/>
-              <rect x="30" y="55" width="40" height="25" rx="4" fill="#C8E6C9"/>
-            </svg>
-          </div>
-          <h3>복지 제도를</h3>
-          <p>새로 짜야 하는데<br>마땅히 떠오르지 않아요</p>
-        </div>
-        <div class="target-card">
-          <div class="target-card-icon lunch">
-            <svg viewBox="0 0 100 100">
-              <rect x="20" y="30" width="60" height="45" rx="6" fill="#90CAF9"/>
-              <rect x="30" y="40" width="40" height="8" rx="2" fill="#fff"/>
-              <rect x="30" y="55" width="30" height="8" rx="2" fill="#fff"/>
-              <circle cx="70" cy="20" r="10" fill="#64B5F6"/>
-            </svg>
-          </div>
-          <h3>회사 점심을</h3>
-          <p>법인카드, 장부로 쓰고 있어서<br>매월 정산하기 힘들어요</p>
-        </div>
-        <div class="target-card">
-          <div class="target-card-icon existing">
-            <svg viewBox="0 0 100 100">
-              <path d="M30 70 L50 30 L70 70 Z" fill="#7CC83F"/>
-              <circle cx="55" cy="50" r="20" fill="#A5D6A7" opacity="0.7"/>
-              <path d="M60 40 Q80 35 75 55" stroke="#4CAF50" stroke-width="3" fill="none"/>
-            </svg>
-          </div>
-          <h3>기존 사용하던</h3>
-          <p>복지 사이트 말고<br>더 만족도 높은 곳을<br>찾고 있어요</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Steps Section -->
-    <section class="steps-section">
-      <h2>이벤트 신청 방법</h2>
-
-      <div class="step-card">
-        <div class="step-content">
-          <span class="step-badge">STEP 1</span>
-          <h3>아래 링크를 복사해</h3>
-          <p>지인에게 보내준다</p>
-        </div>
-        <div class="step-action">
-          <button class="copy-link-btn-small" onclick="copyLink()">
-            링크 복사하기
-            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-content">
-          <span class="step-badge">STEP 2</span>
-          <h3>링크를 전달받은 담당자는</h3>
-          <p>관심 있는 <strong>서비스 문의</strong>를 남긴다</p>
-        </div>
-        <div class="step-illustration">
-          <svg viewBox="0 0 100 100">
-            <rect x="10" y="20" width="50" height="60" rx="4" fill="#C8E6C9" opacity="0.5"/>
-            <line x1="20" y1="35" x2="50" y2="35" stroke="#7CC83F" stroke-width="2"/>
-            <line x1="20" y1="45" x2="45" y2="45" stroke="#7CC83F" stroke-width="2"/>
-            <line x1="20" y1="55" x2="50" y2="55" stroke="#7CC83F" stroke-width="2"/>
-            <path d="M55 50 L75 30 L80 35 L60 55 Z" fill="#7CC83F"/>
-            <line x1="55" y1="50" x2="60" y2="55" stroke="#5AB02A" stroke-width="2"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="step-card step3">
-        <div class="step-content">
-          <span class="step-badge">STEP 3</span>
-          <h3>서비스 상담 후</h3>
-          <h3><strong>실제 도입까지 완료</strong>하면</h3>
-          <p><strong>쿠폰이 바로 지급</strong>된다</p>
-        </div>
-        <div class="step-illustration">
-          <div class="amount-illustration">
-            <svg viewBox="0 0 50 50" class="megaphone-icon" style="width:40px;height:40px;">
-              <path d="M10 20 L20 15 L35 5 L35 45 L20 35 L10 30 Z" fill="#7CC83F"/>
-              <rect x="5" y="20" width="8" height="10" rx="2" fill="#5AB02A"/>
-              <path d="M38 18 Q45 25 38 32" stroke="#7CC83F" stroke-width="2" fill="none"/>
-              <path d="M41 14 Q50 25 41 36" stroke="#7CC83F" stroke-width="2" fill="none"/>
-            </svg>
-            <span class="amount-text">50,000</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-      <button class="cta-btn" onclick="copyLink()">
-        <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-        링크 복사하기
-      </button>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <p>
-        - 이벤트 대상 서비스 : 식권대장/복지대장<br>
-        - 이벤트 기간은 해당 페이지가 내려갈 때까지 계속 진행됩니다.<br>
-        - 쿠폰은 '추천한 담당자'에게 지급이 됩니다.
-      </p>
-    </footer>
-
+    <!-- 하단 큰 링크 복사하기 버튼 오버레이 -->
+    <button class="btn-overlay btn-bottom" onclick="copyLink()" aria-label="링크 복사하기"></button>
   </div>
+
+  <div class="toast" id="toast">링크가 복사되었습니다!</div>
 
   <script>
     function copyLink() {
       const referralLink = 'https://sikdae.typeform.com/recommendevent?&utm_source=corp&utm_medium=corp&utm_campaign=consultation&utm_content=event&utm_term=recommend';
+
       navigator.clipboard.writeText(referralLink).then(function() {
-        alert('링크가 복사되었습니다!');
+        showToast();
       }).catch(function() {
         const textarea = document.createElement('textarea');
         textarea.value = referralLink;
@@ -551,8 +103,16 @@
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        alert('링크가 복사되었습니다!');
+        showToast();
       });
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function() {
+        toast.classList.remove('show');
+      }, 2000);
     }
   </script>
 </body>
