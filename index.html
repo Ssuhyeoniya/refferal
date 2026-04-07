@@ -28,21 +28,19 @@
       display: block;
     }
 
-    /* 투명 클릭 오버레이 버튼 공통 */
-    .btn-overlay {
+    /* 하단 큰 링크 복사하기 버튼 오버레이 */
+    #btn-bottom {
       position: absolute;
       background: transparent;
       border: none;
       cursor: pointer;
       z-index: 10;
-    }
-
-    /* 하단 큰 링크 복사하기 버튼 */
-    .btn-bottom {
-      top: 87.4%;
-      left: 4%;
-      width: 92%;
-      height: 3.2%;
+      /* 이미지 원본 1000x3673 기준
+         버튼 영역: y=3196~3340, x=55~945 */
+      left: 5.5%;
+      width: 89%;
+      top: 86.99%;
+      height: 3.93%;
     }
 
     /* 복사 완료 토스트 메시지 */
@@ -71,37 +69,57 @@
 </head>
 <body>
   <div class="wrapper">
-    <img src="event.png" alt="지인 추천 이벤트">
-
-    <!-- 하단 큰 링크 복사하기 버튼 오버레이 -->
-    <button class="btn-overlay btn-bottom" onclick="copyLink()" aria-label="링크 복사하기"></button>
+    <img src="event.png" alt="지인 추천 이벤트" id="eventImg">
+    <button id="btn-bottom" onclick="copyLink()" aria-label="링크 복사하기"></button>
   </div>
 
   <div class="toast" id="toast">링크가 복사되었습니다!</div>
 
   <script>
-    function copyLink() {
-      const referralLink = 'https://sikdae.typeform.com/recommendevent?&utm_source=corp&utm_medium=corp&utm_campaign=consultation&utm_content=event&utm_term=recommend';
+    var REFERRAL_LINK = 'https://sikdae.typeform.com/recommendevent?&utm_source=corp&utm_medium=corp&utm_campaign=consultation&utm_content=event&utm_term=recommend';
 
-      navigator.clipboard.writeText(referralLink).then(function() {
-        showToast();
-      }).catch(function() {
-        const textarea = document.createElement('textarea');
-        textarea.value = referralLink;
-        document.body.appendChild(textarea);
-        textarea.select();
+    // 이미지 원본 크기: 1000 x 3673
+    // 하단 버튼 원본 좌표: y 3196~3340, x 55~945
+    var IMG_H = 3673;
+    var BTN_TOP = 3080;
+    var BTN_BOT = 3220;
+    var BTN_LEFT = 55;
+    var BTN_RIGHT = 945;
+
+    function positionButton() {
+      var img = document.getElementById('eventImg');
+      var btn = document.getElementById('btn-bottom');
+      var renderedH = img.clientHeight;
+      var renderedW = img.clientWidth;
+      var scale = renderedH / IMG_H;
+
+      btn.style.top  = (BTN_TOP  * scale) + 'px';
+      btn.style.left = (BTN_LEFT * scale) + 'px';
+      btn.style.width  = ((BTN_RIGHT - BTN_LEFT) * scale) + 'px';
+      btn.style.height = ((BTN_BOT  - BTN_TOP)   * scale) + 'px';
+    }
+
+    document.getElementById('eventImg').addEventListener('load', positionButton);
+    window.addEventListener('resize', positionButton);
+    // 이미 캐시된 경우
+    if (document.getElementById('eventImg').complete) positionButton();
+
+    function copyLink() {
+      navigator.clipboard.writeText(REFERRAL_LINK).then(showToast).catch(function() {
+        var ta = document.createElement('textarea');
+        ta.value = REFERRAL_LINK;
+        document.body.appendChild(ta);
+        ta.select();
         document.execCommand('copy');
-        document.body.removeChild(textarea);
+        document.body.removeChild(ta);
         showToast();
       });
     }
 
     function showToast() {
-      const toast = document.getElementById('toast');
+      var toast = document.getElementById('toast');
       toast.classList.add('show');
-      setTimeout(function() {
-        toast.classList.remove('show');
-      }, 2000);
+      setTimeout(function() { toast.classList.remove('show'); }, 2000);
     }
   </script>
 </body>
